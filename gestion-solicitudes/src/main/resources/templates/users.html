@@ -1,0 +1,252 @@
+<div th:replace="fragments/header"></div>
+<div th:replace="fragments/navbar"></div>
+<div th:replace="fragments/sidebar"></div>
+<div>
+	<main class="app-content">
+		<div class="app-title">
+			<div>
+				<h1>
+					<i class="fas fa-user-tag"></i> Usuarios
+					<button class="btn btn-primary" onClick="openModal();"
+						type="button">
+						<i class="fa fa-plus-circle"></i> Nuevo
+					</button>
+				</h1>
+			</div>
+			<ul class="app-breadcrumb breadcrumb">
+				<li class="breadcrumb-item"><i class="fa fa-home fa-lg"></i></li>
+				<li class="breadcrumb-item"><a href="#">Roles</a></li>
+			</ul>
+		</div>
+		<div class="row">
+			<div class="col-md-12">
+				<div class="tile">
+					<div class="tile-body">
+					<div th:if="${message != null}" class="alert alert-success alert-dismissible fade show text-center message">
+						[[${message}]]</div>
+						<div class="table-responsive">
+							<table class="table table-hover table-bordered"
+								id="sampleTable">
+								<thead>
+									<tr>
+										<th>Id</th>
+										<th>NOMBRE</th>
+										<th>APELLIDO</th>
+										<th>EMAIL</th>
+										<th>USUARIO</th>
+										<th>ROL</th>
+										<th>ESTADO</th>
+										<th>ACCIONES</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr th:each="users : ${listUsers}">
+										<td>[[${users.id}]]</td>
+										<td>[[${users.name}]]</td>
+										<td>[[${users.lastName}]]</td>
+										<td>[[${users.email}]]</td>
+										<td>[[${users.username}]]</td>
+										<td>[[${users.role.name}]]</td>
+										<td><span th:if="${users.status == 1}"> <span
+												class="badge badge-success">Activo</span>
+										</span> <span th:if="${users.status == 2}"> <span
+												class="badge badge-danger">Inactivo</span>
+										</span></td>
+										<td class="form-group col-md-2">
+											<button class="btn btn-primary  btn-sm btnEditRol"
+												th:onclick="'javascript:fntEditarUsuario(' + ${users.id} + ')'"
+												title="Editar rol">
+												<i class="fa fa-pencil"></i>
+											</button>
+											<button class="btn btn-danger btn-sm btnDelRol"
+												th:onclick="'javascript:fntEliminarUsuario(' + ${users.id} + ')'"
+												title="Eliminar rol">
+												<i class="fa fa-trash"></i>
+											</button>
+										</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</main>
+</div>
+<script th:inline="javascript">
+
+	function activarBoton() {
+		const nameInput = document.getElementById('name');
+		const lastNameInput = document.getElementById('lastName');
+		const identificationInput = document.getElementById('identification');
+		const emailInput = document.getElementById('email');
+		const passwordInput = document.getElementById('password');
+		const usernameInput = document.getElementById('username');
+		const confirmPasswordInput = document.getElementById('confirmPassword');
+		const statusInput = document.getElementById('status');
+		const roleInput = document.getElementById('role');
+		const btnEnviar = document.getElementById('btnActionForm');
+		btnEnviar.disabled = true;
+		nameInput.value = "";
+		lastNameInput.value = "";
+		identificationInput.value = "";
+		emailInput.value = "";
+		usernameInput.value="";
+		passwordInput.value = "";
+		confirmPasswordInput.value = "";
+		statusInput.value = "";
+		roleInput.value="";
+
+		let validName = false;
+		let validLastName = false;
+		let validIdentification = false;
+		let validEmail = false;
+		let validPassword = false;
+		let validConfirmPassword = false;
+		let validStatus = false;
+		let validRole = false;
+		let validUserName = false;
+
+		function validarFormulario(e) {
+			const name = nameInput.value.trim();
+			const lastName = lastNameInput.value.trim();
+			const identification = identificationInput.value.trim();
+			const email = emailInput.value.trim();
+			const username = usernameInput.value.trim();
+			const password = passwordInput.value.trim();
+			const confirmPassword = confirmPasswordInput.value.trim();
+			const status = statusInput.value.trim();
+			const role = roleInput.value.trim();
+
+			validName = name !== '';
+			validLastName = lastName !== '';
+			validIdentification = identification !== '';
+			validEmail = email.includes('@') && email.includes('.');
+			validUserName = username !='';
+			validPassword = password.length >= 8;
+			validConfirmPassword = confirmPassword === password;
+			validStatus = status !== '';
+			validRole = role !== '';
+			if (!validConfirmPassword || !validPassword) {
+				passwordInput.classList.add('is-invalid', 'border-danger');
+				confirmPasswordInput.classList.add('is-invalid', 'border-danger');
+			} else {
+				passwordInput.classList.remove('is-invalid', 'border-danger');
+				confirmPasswordInput.classList.remove('is-invalid', 'border-danger');
+			}
+
+			if (validName) {
+				nameInput.classList.remove('error');
+			} else {
+				nameInput.classList.add('error');
+			}
+
+
+			if (
+				validName &&
+				validLastName &&
+				validIdentification &&
+				validEmail &&
+				validPassword &&
+				validUserName &&
+				validConfirmPassword &&
+				validStatus &&
+				validRole
+			) {
+				btnEnviar.disabled = false;
+			} else {
+				btnEnviar.disabled = true;
+			}
+		}
+		nameInput.addEventListener('input', validarFormulario);
+		lastNameInput.addEventListener('input', validarFormulario);
+		identificationInput.addEventListener('input', validarFormulario);
+		emailInput.addEventListener('input', validarFormulario);
+		usernameInput.addEventListener('input', validarFormulario);
+		passwordInput.addEventListener('input', validarFormulario);
+		statusInput.addEventListener('change', validarFormulario);
+		roleInput.addEventListener('change', validarFormulario);
+		confirmPasswordInput.addEventListener('input', validarFormulario);
+	}
+
+	async function fntEliminarUsuario(idUsuario) {
+		swal({
+			title: "Eliminar Usuario",
+			text: "¿Realmente quiere eliminar el Usuario?",
+			type: "warning",
+			showCancelButton: true,
+			confirmButtonText: "Si, eliminar!",
+			cancelButtonText: "No, cancelar!",
+			closeOnConfirm: false,
+			closeOnCancel: true
+		}, async function (isConfirm) {
+
+			if (isConfirm) {
+				let res = await fetch(`/users/delete/${idUsuario}`, {
+				    method: 'DELETE'
+				}),
+					json = await res.json();
+				if (json) {
+					swal("Eliminar!", "Usuario eliminado correctamente.", "success");
+					location.reload(); 
+				} else {
+					swal("Atención!", "No se pudo eliminar el usuario.", "error");
+				}
+			}
+
+		});
+	}
+	async function fntEditarUsuario(idUsuario) {
+		activarBoton();
+		document.querySelector('#titleModal').innerHTML = "Actualizar Usuario";
+		document.querySelector('.modal-header').classList.replace("headerRegister", "headerUpdate");
+		document.querySelector('#btnActionForm').classList.replace("btn-primary", "btn-info");
+		document.querySelector('#btnText').innerHTML = "Actualizar";
+		let ajaxUrl = "users/edit/" + idUsuario;
+		try {
+			const res = await fetch(ajaxUrl);
+			const json = await res.json();
+			if (json) {
+				const formUser = document.getElementById('formId');
+				const rolId = formUser.setAttribute('action', `users/edit/${json.id}`);
+				document.querySelector("#_method").value = "put";
+				document.querySelector("#id").value = json.id;
+				document.querySelector("#name").value = json.name;
+				document.querySelector("#lastName").value = json.lastName;
+				document.querySelector("#identification").value = json.identification;
+				document.querySelector("#email").value = json.email;
+				document.querySelector("#username").value = json.username;
+				 if(json.status == 1){
+		            document.querySelector("#status").value = 1;
+		        }else{
+		        	document.querySelector("#status").value = 2;
+		        }
+				document.querySelector("#role").value = json.role.id;
+			}
+			$('#modalFormUsuario').modal('show');
+		} catch (error) {
+			console.error("Error fetching or parsing JSON:", error);
+		}
+	}
+	function openModal() {
+		var formUser = document.getElementById('formId');
+		formUser.setAttribute('action', 'users/save');
+		document.querySelector("#id").value = "";
+		/*document.querySelector("#name").value = "";
+		document.querySelector("#lastName").value = "";
+		document.querySelector("#identification").value = "";
+		document.querySelector("#email").value = "";
+		document.querySelector("#role").value = "";
+		document.querySelector("#status").value = "";*/
+		document.querySelector("#_method").value = "post";
+		document.querySelector('.modal-header').classList.replace("headerUpdate", "headerRegister");
+		document.querySelector('#btnActionForm').classList.replace("btn-info", "btn-primary");
+		document.querySelector('#btnText').innerHTML = "Guardar";
+		document.querySelector('#titleModal').innerHTML = "Nuevo Usuario";
+		$('#modalFormUsuario').modal('show');
+		activarBoton();
+	}
+</script>
+<div th:replace="fragments/users_form"></div>
+<div th:replace="fragments/footer"></div>

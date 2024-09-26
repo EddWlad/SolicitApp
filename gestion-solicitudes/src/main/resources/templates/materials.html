@@ -1,0 +1,185 @@
+<div th:replace="fragments/header"></div>
+<div th:replace="fragments/navbar"></div>
+<div th:replace="fragments/sidebar"></div>
+
+<div>
+	<main class="app-content">
+		<div class="app-title">
+			<div>
+				<ul class="app-breadcrumb breadcrumb">
+					<li class="breadcrumb-item">
+						<h1><i class="fa fa-gavel"></i> Materiales
+							<button class="btn btn-outline-primary ml-1" onClick="openModal();" type="button">
+								<i class="fa fa-plus-circle"></i>Agregar
+							</button>
+						<!--<button class="btn btn-outline-success ml-1" onClick="openModalUpload();" type="button">
+								//<i class="fa fa-upload"></i> Cargar Excel
+							</button>-->
+						</h1>
+					</li>
+				</ul>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-12">
+				<div class="tile">
+					<div class="tile-body">
+						<div th:if="${message != null}"
+							class="alert alert-success alert-dismissible fade show text-center message">
+							[[${message}]]</div>
+						<div th:if="${errorMessage != null}"
+							class="alert alert-danger alert-dismissible fade show text-center">
+							[[${errorMessage}]]
+						</div>
+						<div class="table-responsive">
+							<table class="table table-hover table-bordered" id="sampleTable">
+								<thead>
+									<tr>
+										<th>ID</th>
+										<th>NOMBRE</th>
+										<th>DESCRIPCION</th>
+										<th>UNIDAD</th>
+										<th>ESTADO</th>
+										<th class="col-2">ACCIONES</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr th:each="material : ${listMaterial}">
+										<td>[[${material.id}]]</td>
+										<td>[[${material.name}]]</td>
+										<td>[[${material.description}]]</td>
+										<td>[[${material.unitType}]]</td>
+										<td>
+											<span th:if="${material.status == 1}">
+												<span class="badge badge-success">Activo</span>
+											</span>
+											<span th:if="${material.status == 2}">
+												<span class="badge badge-danger">Inactivo</span>
+											</span>
+										</td>
+										<td class="form-group col-2">
+											<button class="btn btn-primary  btn-sm btnEditMaterials"
+												th:onclick="'javascript:fntEditMaterials(' + ${material.id} + ')'"
+												title="Editar Material"><i class="fa fa-pencil"></i></button>
+											<button class="btn btn-danger btn-sm btnDelMaterials"
+												th:onclick="'javascript:fntDeleteMaterials(' + ${material.id} + ')'"
+												title="Eliminar Material"><i class="fa fa-trash"></i></button>
+										</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</main>
+</div>
+<script th:inline="javascript">
+async function fntDeleteMaterials(idMaterials) {
+	swal({
+		title: "Eliminar Material",
+		text: "¿Realmente quiere eliminar este material?",
+		type: "warning",
+		showCancelButton: true,
+		confirmButtonText: "Si, eliminar!",
+		cancelButtonText: "No, cancelar!",
+		closeOnConfirm: false,
+		closeOnCancel: true
+	}, async function (isConfirm) {
+
+		if (isConfirm) {
+			let res = await fetch(`/materials/delete/${idMaterials}`, {
+				method: 'DELETE'
+			}),
+				json = await res.json();
+			if (json) {
+				swal("Eliminar!", "Material eliminado correctamente.", "success");
+				location.reload();
+			} else {
+				swal("Atención!", "No se pudo eliminar el material.", "error");
+			}
+		}
+
+	});
+}
+async function fntEditMaterials(idMaterials) {
+	document.querySelector('#titleModal').innerHTML = "Actualizar Material";
+	document.querySelector('.modal-header').classList.replace("headerRegister", "headerUpdate");
+	document.querySelector('#btnActionForm').classList.replace("btn-primary", "btn-info");
+	document.querySelector('#btnText').innerHTML = "Actualizar";
+	let ajaxUrl = "/materials/edit/" + idMaterials;
+	let res = await fetch(ajaxUrl),
+		json = await res.json();
+	if (json) {
+		var formMaterials = document.getElementById('formMaterials');
+		const MaterialsId = formMaterials.setAttribute('action', `materials/edit/${json.id}`);
+		document.querySelector("#_method").value = "put";
+		document.querySelector("#id").value = json.id;
+		document.querySelector("#name").value = json.name;
+		document.querySelector("#description").value = json.description;
+		document.querySelector("#unitType").value = json.unitType;
+		document.querySelector("#status").value = json.status;
+	}
+	$('#modalFormMaterials').modal('show');
+}
+
+function openModal() {
+    console.log("Abriendo modal de materiales");
+    var formMaterials = document.getElementById('formMaterials');
+    formMaterials.setAttribute('action', 'materials/save');
+    document.querySelector("#_method").value = "post";
+    document.querySelector("#id").value = "";
+    document.querySelector("#name").value = "";
+    document.querySelector("#description").value = "";
+    document.querySelector("#unitType").value = "";
+    document.querySelector("#status").value = "";
+    document.querySelector('.modal-header').classList.replace("headerUpdate", "headerRegister");
+    document.querySelector('#btnActionForm').classList.replace("btn-info", "btn-primary");
+    document.querySelector('#btnText').innerHTML = "Guardar";
+    document.querySelector('#titleModal').innerHTML = "Nuevo Material";
+    $('#modalFormMaterials').modal('show');
+}
+
+/*function openModalUpload() {
+	$('#modalUploadExcel').modal('show');
+}*/
+
+/*async function uploadExcel() {
+    const formData = new FormData(document.getElementById("formUploadExcel"));
+    const fileInput = document.getElementById("fileInput").files[0];
+
+    if (!fileInput) {
+        alert("Por favor, selecciona un archivo.");
+        return;
+    }
+
+    formData.append("file", fileInput);
+
+    try {
+        let res = await fetch('/materials/upload', {
+            method: 'POST',
+            body: formData
+        });
+
+        console.log('Response Status:', res.status); // Verifica el código de estado
+        console.log('Response Headers:', res.headers); // Verifica los encabezados
+
+        let json = await res.json();
+        console.log('Response Body:', json); // Verifica el cuerpo de la respuesta
+
+        if (res.ok && json.success) {
+            alert('Archivo cargado exitosamente.');
+            location.reload();
+        } else {
+            alert('Error al cargar el archivo.');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        alert('Error al cargar el archivo.');
+    }
+}*/
+</script>
+
+<div th:replace="fragments/materials_form"></div>
+<div th:replace="fragments/footer"></div>

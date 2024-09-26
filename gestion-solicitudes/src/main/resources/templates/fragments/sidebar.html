@@ -1,0 +1,34 @@
+<div class="app-sidebar__overlay" data-toggle="sidebar"></div>
+<aside class="app-sidebar bg-danger">
+	<div class="app-sidebar__user">
+		<img class="app-sidebar__user-avatar">
+		<div>
+			<!--th:text="${nombreUsuario}" th:text="${nombreRol}" -->
+			<p class="app-sidebar__user-name">EBICS SA - CONECEL</p>
+			<p class="app-sidebar__user-designation">ADMINISTRADOR</p>
+		</div>
+	</div>
+	<ul class="app-menu">
+		<li><a th:class="'app-menu__item '+${activoRequest}" th:href="@{/requests}"><i
+					class="app-menu__icon fa fa-clipboard"></i><span class="app-menu__label">Solicitudes</span></a></li>
+		<li><a th:class="'app-menu__item '+${activoMaterial}" th:href="@{/materials}"><i
+					class="app-menu__icon fa fa-gavel"></i><span class="app-menu__label">Materiales</span></a></li>
+		<li><a th:class="'app-menu__item '+${activoProjects}" th:href="@{/projects}"><i
+					class="app-menu__icon fa fa-tasks"></i><span class="app-menu__label">Proyectos</span></a></li>
+		<li><a th:class="'app-menu__item '+${activoCompany}" th:href="@{/companies}"><i
+					class="app-menu__icon fa fa-building"></i><span class="app-menu__label">Empresas</span></a></li>
+		<li><a th:class="'app-menu__item '+${activoDevengaciones}" th:href="@{/devengaciones}"><i
+					class="app-menu__icon fa fa-line-chart"></i><span class="app-menu__label">Devengaciones</span></a>
+		</li>
+
+		<li class="treeview"><a th:class="'app-menu__item '+${activoUsers}" href="" data-toggle="treeview"><i
+					class="app-menu__icon fa fa-users"></i><span class="app-menu__label">Usuarios</span><i
+					class="treeview-indicator fa fa-angle-right"></i></a>
+			<ul class="treeview-menu">
+				<li><a class="treeview-item" th:href="@{/users}"><i class="icon fa fa-circle-o"></i> Usuarios</a>
+				</li>
+				<li><a class="treeview-item" th:href="@{/rols}"><i class="icon fa fa-circle-o"></i> Roles</a></li>
+			</ul>
+		</li>
+	</ul>
+</aside>

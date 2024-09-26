@@ -1,0 +1,81 @@
+<!-- Modal -->
+<div class="modal fade" id="modalFormEmpresa" tabindex="-1" role="dialog" aria-hidden="true">
+	<div class="modal-dialog modal-dialog-centered" role="document">
+		<div class="modal-content">
+			<div class="modal-header headerRegister">
+				<h5 class="modal-title" id="titleModal">Nueva Empresa</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<div class="tile">
+					<div class="tile-body">
+						<form th:method="post" enctype="multipart/form-data" id="formIdEmpresa" th:action="@{'/companies/save'}">
+						<input type="hidden" id="_method" name="_method" value="post">
+							<input type="hidden" id="id" name="id" value="">
+							<input type="hidden" id="image" name="image" value="">
+							<div class="form-group image-container">
+								<img id="imagenPrevia" src="images/sin_logo.jpg" class="img-fluid" alt= "Logo de empresa"/>
+							</div>
+							<div class="form-group">
+								<label class="control-label">RUC</label>
+								<input class="form-control" id="ruc" name="ruc" type="text"
+									placeholder="RUC de la empresa"/>
+							</div>
+							<div class="form-group">
+								<label class="control-label">NOMBRE</label>
+								<input class="form-control" id="name" name="name" type="text"
+									placeholder="Nombre de la empresa"/>
+							</div>
+							<div class="form-group">
+								<label class="control-label">TELEFONO</label>
+								<input class="form-control" id="phone" name="phone" type="text"
+									placeholder="Telefono de la empresa"/>
+							</div>
+							<div class="form-group row">
+							  <label class="control-label col-md-3">Selecionar archivo</label>
+							  <div class="col-md-8">
+							    <input class="form-control" id="file" name="file" type="file" onchange="previewAndEncodeImage();"/>
+							  </div>
+							</div>
+							<div class="form-group">
+								<label for="exampleSelect1">ESTADO</label>
+								<select class="form-control" id="status" name="status">
+									<option value="1">Activo</option>
+									<option value="2">Inactivo</option>
+								</select>
+							</div>
+							<div class="tile-footer">
+								<button id="btnActionForm" class="btn btn-primary" type="submit"><i
+										class="fa fa-fw fa-lg fa-check-circle"></i><span
+										id="btnText">Guardar</span></button>&nbsp;&nbsp;&nbsp;<a
+									class="btn btn-secondary" href="#" data-dismiss="modal"><i
+										class="fa fa-fw fa-lg fa-times-circle"></i>Cancelar</a>
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<script>
+	function previewAndEncodeImage() {
+	    const fileInput = document.getElementById('file');
+	    const imagePreview = document.getElementById('imagenPrevia');
+	
+	    if (fileInput.files && fileInput.files[0]) {
+	        const reader = new FileReader();
+	
+	        reader.onload = function(e) {
+	            imagePreview.src = e.target.result;
+				const base64Image = e.target.result;
+				document.getElementById('image').value = base64Image;
+	        };
+	
+	        reader.readAsDataURL(fileInput.files[0]);
+	    }
+	}	
+
+</script>
