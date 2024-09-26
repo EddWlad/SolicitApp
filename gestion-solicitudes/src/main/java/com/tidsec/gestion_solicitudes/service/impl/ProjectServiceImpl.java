@@ -46,9 +46,9 @@ public class ProjectServiceImpl implements IProjectService{
 			projectDb.setContractor(project.getContractor());
 			projectDb.setCity(project.getCity());
 			projectDb.setStartDate(project.getStartDate());
-			projectDb.setInventory(project.getInventory());
 			projectDb.setEndDate(project.getEndDate());
 			projectDb.setEngineer(project.getEngineer());
+			projectDb.setRequests(project.getRequests());
 			projectDb.setStatus(project.getStatus());
 			return projectRepository.save(projectDb);
 		}

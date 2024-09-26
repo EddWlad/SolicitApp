@@ -5,7 +5,6 @@ import java.util.List;
 import com.tidsec.gestion_solicitudes.entities.Inventory;
 import com.tidsec.gestion_solicitudes.entities.Material;
 
-
 public interface IMaterialService {
 	List<Material> getAll();
 	Material getById(Long id);

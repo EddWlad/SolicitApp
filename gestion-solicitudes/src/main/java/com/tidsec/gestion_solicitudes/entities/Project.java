@@ -65,15 +65,11 @@ public class Project {
 
     @Column
     private String observations;
-
-    @Column(nullable = false)
-    private Integer status;
-
-    @OneToOne(mappedBy = "project", cascade = CascadeType.ALL)
-	@JsonManagedReference
-    private Inventory inventory;
-
+    
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL)
 	@JsonManagedReference
     private List<Request> requests;
+
+    @Column(nullable = false)
+    private Integer status;
 }

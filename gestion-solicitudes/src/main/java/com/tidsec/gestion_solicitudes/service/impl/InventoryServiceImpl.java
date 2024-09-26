@@ -38,7 +38,7 @@ public class InventoryServiceImpl implements IInventoryService {
 		if(inventory != null)
 		{
 			inventoryDb.setQuantity(inventory.getQuantity());
-			inventoryDb.setProject(inventory.getProject());
+			inventoryDb.setRequest(inventory.getRequest());
 			inventoryDb.setStatus(inventory.getStatus());
 			return inventoryRepository.save(inventoryDb );
 		}

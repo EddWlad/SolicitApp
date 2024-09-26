@@ -26,6 +26,7 @@ import com.tidsec.gestion_solicitudes.entities.Project;
 import com.tidsec.gestion_solicitudes.entities.User;
 import com.tidsec.gestion_solicitudes.service.IInventoryService;
 import com.tidsec.gestion_solicitudes.service.IProjectService;
+import com.tidsec.gestion_solicitudes.service.IRequestService;
 
 import jakarta.validation.Valid;
 
@@ -36,7 +37,7 @@ public class ProjectController {
 	private IProjectService service;
 	
 	@Autowired
-	private IInventoryService inventoryService;
+	private IRequestService requestService;
 	
 	@InitBinder
     public void initBinder(WebDataBinder binder) {
@@ -106,7 +107,7 @@ public class ProjectController {
 			try {
 				Project projectUpdate = service.getProject(id);
 				if (projectUpdate != null) {
-					project.setInventory(projectUpdate.getInventory());
+					project.setRequests(projectUpdate.getRequests());
 					service.updateProject(id,project);
 					redirectAttributes.addFlashAttribute("message", "PROYECTO MODIFICADO EXITOSAMENTE");
 				} else {

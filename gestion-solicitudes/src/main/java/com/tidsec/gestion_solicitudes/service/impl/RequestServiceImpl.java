@@ -41,6 +41,7 @@ public class RequestServiceImpl implements IRequestService{
 			requestDb.setProject(request.getProject());
 			requestDb.setDate(request.getDate());
 			requestDb.setRequester(request.getRequester());
+			requestDb.setInventory(request.getInventory());
 			requestDb.setStatus(request.getStatus());
 			requestDb.setStatusLogicalDelete(request.getStatusLogicalDelete());
 			return requestRepository.save(requestDb);

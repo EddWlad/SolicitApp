@@ -1,0 +1,99 @@
+<!-- Modal -->
+<div class="modal fade" id="modalFormProjects" tabindex="-1" role="dialog" aria-hidden="true">
+	<div class="modal-dialog modal-lg" role="document">
+		<div class="modal-content">
+			<div class="modal-header headerRegister">
+				<h5 class="modal-title" id="titleModal">
+                [[${projects != null and projects.id != null} ? 'Editar Proyecto' : 'Nuevo Proyecto']]</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<div class="tile">
+					<div class="tile-body">
+						<form th:method="post" id="formProjects"
+							  th:action="@{${projects.id} == null ? '/projects/save' : '/projects/edit/' + ${projects.id}}"
+                              th:object="${projects}">
+                            <input type="hidden" id="id" name="id" th:value="*{id}">
+                            <input type="hidden" id="_method" name="_method" value="post" />
+							<div class="form-row">								
+								<div class="form-group col-md-6">
+									<div class="form-group">
+										<label class="control-label">FECHA INICIO</label>
+										<input class="form-control valid validText" id="startDate" name="startDate" type="date"
+											placeholder="Fecha inicio de proyecto" th:field="*{startDate}"/>
+									</div>
+								</div>	
+								<div class="form-group col-md-6">
+									<div class="form-group">
+										<label class="control-label">FECHA FIN</label>
+										<input class="form-control valid validText" id="endDate" name="endDate" type="date"
+											placeholder="Fecha fin de proyecto" th:field="*{endDate}"/>
+									</div>
+								</div>
+							</div>	
+							<div class="form-row">
+								<div class="form-group col-md-6">
+									<label class="control-label">PROYECTO</label>
+									<input class="form-control valid validText" id="projectName" name="projectName" type="text"
+										placeholder="Nombre del proyecto" th:field="*{projectName}">
+								</div>
+								<div class="form-group col-md-6">
+									<label for="engineer">RESIDENTE</label>
+									<select class="form-control" id="engineer" name="engineer">
+										<option value="" disabled selected>-SELECCIONE RESIDENTE-</option>
+										<option th:each="engineer:${listUser}" 
+										th:value="${engineer.id}" th:text="${engineer.name}" th:field="*{engineer}"></option>
+									</select>
+								</div>
+							</div>
+							<div class="form-row">
+								<div class="form-group col-md-6">
+									<label class="control-label">CIUDAD</label>
+									<input class="form-control valid validText" id="city" name="city" type="text"
+										placeholder="Ciudad del proyecto" th:field="*{city}" />
+								</div>
+													
+								<div class="form-group col-md-6">
+									<label class="control-label">CONTRATISTA</label>
+									<input class="form-control valid validText" id="contractor" name="contractor" type="text"
+										placeholder="Contratista a cargo" th:field="*{contractor}" />
+								</div>
+							</div>
+							<div class="form-row">
+								<div class="form-group col-md-6">
+									<label class="control-label">RESPONSABLE DE LIQUIDACION</label>
+									<input class="form-control valid validText" id="materialLiquidator" name="materialLiquidator" type="text"
+										placeholder="Responsable de liquidacion" th:field="*{materialLiquidator}"/>
+								</div>
+								<div class="form-group col-md-6">
+									<label for="exampleSelect1">ESTADO</label>
+									<select class="form-control" id="status" name="status" th:field="*{status}">
+										<option value="" disabled selected>Seleccione el estado</option>
+										<option value="1">Activo</option>
+										<option value="2">Inactivo</option>
+									</select>
+								</div>
+							</div>
+							<div class="form-row">
+								<div class="form-group col-md-6">
+									<label class="control-label">OBSERVACIONES</label>
+									<textarea class="form-control valid validText" id="observations" name="observations" type="text"
+										placeholder="Observaciones" th:field="*{observations}"></textarea>
+								</div>
+							</div>
+							<div class="tile-footer">
+								<button id="btnActionForm" class="btn btn-primary" type="submit"><i
+										class="fa fa-fw fa-lg fa-check-circle"></i><span
+										id="btnText">Guardar</span></button>&nbsp;&nbsp;&nbsp;<a
+									class="btn btn-secondary" href="#" data-dismiss="modal"><i
+										class="fa fa-fw fa-lg fa-times-circle"></i>Cancelar</a>
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

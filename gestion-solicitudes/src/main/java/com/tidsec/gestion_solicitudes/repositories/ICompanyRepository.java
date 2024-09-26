@@ -8,7 +8,6 @@ import org.springframework.stereotype.Repository;
 
 import com.tidsec.gestion_solicitudes.entities.Company;
 
-
 @Repository
 public interface ICompanyRepository extends JpaRepository<Company, Long>{
 	List<Company> findByStatusNot(Integer status);

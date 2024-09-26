@@ -5,8 +5,6 @@ import java.util.Optional;
 
 import com.tidsec.gestion_solicitudes.entities.Company;
 
-
-
 public interface ICompanyService {
 	List<Company> getAll();
 	Company getById(Long id);

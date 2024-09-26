@@ -11,7 +11,6 @@ import com.tidsec.gestion_solicitudes.entities.Material;
 import com.tidsec.gestion_solicitudes.repositories.IMaterialRepository;
 import com.tidsec.gestion_solicitudes.service.IMaterialService;
 
-
 @Service
 public class MaterialServiceImpl implements IMaterialService{
 

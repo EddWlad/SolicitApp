@@ -6,7 +6,6 @@ import com.tidsec.gestion_solicitudes.entities.Inventory;
 import com.tidsec.gestion_solicitudes.entities.Material;
 import com.tidsec.gestion_solicitudes.entities.Project;
 
-
 public interface IInventoryService {
 	List<Inventory> getAll();
 	Inventory getById(Long id);
