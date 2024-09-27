@@ -9,6 +9,7 @@ import com.tidsec.gestion_solicitudes.entities.Company;
 import com.tidsec.gestion_solicitudes.entities.Project;
 import com.tidsec.gestion_solicitudes.entities.Request;
 import com.tidsec.gestion_solicitudes.entities.User;
+import com.tidsec.gestion_solicitudes.model.RequestModalDTO;
 import com.tidsec.gestion_solicitudes.repositories.IRequestRepository;
 import com.tidsec.gestion_solicitudes.service.IRequestService;
 
@@ -85,6 +86,12 @@ public class RequestServiceImpl implements IRequestService{
 	@Override
 	public List<Request> findByRequester(User requester) {
 		return requestRepository.findByRequester(requester);
+	}
+
+	@Override
+	public List<RequestModalDTO> detailRequestById(Long id) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

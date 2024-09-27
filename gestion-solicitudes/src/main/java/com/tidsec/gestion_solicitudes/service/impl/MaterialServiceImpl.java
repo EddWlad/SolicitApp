@@ -81,6 +81,13 @@ public class MaterialServiceImpl implements IMaterialService{
 		return materialRepository.findByInventory(inventory);
 	}
 
+	@Override
+	public List<Material> buscarPorIds(List<Long> ids) {
+		return materialRepository.findAllById(ids);
+	}
+
+
+
 
 
 
