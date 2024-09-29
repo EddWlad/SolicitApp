@@ -1,6 +1,7 @@
 package com.tidsec.gestion_solicitudes.service.impl;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -76,6 +77,11 @@ public class InventoryServiceImpl implements IInventoryService {
 	@Override
 	public List<Inventory> findByMaterial(Material material) {
 		return inventoryRepository.findByMaterial(material);
+	}
+
+	@Override
+	public Inventory findById(Long id) {
+		return inventoryRepository.findById(id).orElse(null);
 	}
 
 }

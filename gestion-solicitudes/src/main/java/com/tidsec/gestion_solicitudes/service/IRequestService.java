@@ -6,6 +6,8 @@ import com.tidsec.gestion_solicitudes.entities.Company;
 import com.tidsec.gestion_solicitudes.entities.Project;
 import com.tidsec.gestion_solicitudes.entities.Request;
 import com.tidsec.gestion_solicitudes.entities.User;
+import com.tidsec.gestion_solicitudes.model.RequestModalDTO;
+
 
 
 public interface IRequestService {
@@ -20,5 +22,7 @@ public interface IRequestService {
 	List<Request> findByCompany(Company company);
 	List<Request> findByProject(Project project);
 	List<Request> findByRequester(User requester);
+	
+	List<RequestModalDTO> detailRequestById(Long id);
 
 }
