@@ -1,0 +1,166 @@
+<!-- Modal -->
+<div class="modal fade" id="modalFormRequest" tabindex="-1" role="dialog" aria-hidden="true">
+	<div class="modal-dialog modal-dialog-centered modal-xl" role="document">
+		<div class="modal-content">
+			<div class="modal-header headerRegister">
+				<h5 class="modal-title" id="titleModal">Nueva Solicitud</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<div class="tile">
+					<div class="tile-body">
+						<form th:method="post" enctype="multipart/form-data" id="formIdEtiqueta"
+							th:action="@{'/requests/save'}" class="form-horizontal">
+							<input type="hidden" id="_method" name="_method" value="post">
+							<input type="hidden" id="idEtiqueta" name="idEtiqueta" value="">
+							<input type="hidden" id="foto" value="">
+							<div class="row">
+								<div class="col-md-4">
+									<div class="form-group">
+										<label class="control-label">FECHA</label>
+										<input class="form-control" id="date" readonly />
+									</div>
+									<div class="form-group image-container">
+										<img id="imagenPrevia" src="images/sin_logo.jpg" class="img-fluid"
+											alt="Logo de empresa" />
+									</div>
+									<div class="form-group">
+										<label for="role">EMPRESA</label>
+										<select class="form-control" id="company" name="company"
+											onchange="loadDetailsCompany(this.value)">
+											<option value="" disabled selected>Seleccione la empresa</option>
+											<option th:each="company:${listCompany}" th:value="${company.id}"
+												th:text="${company.name}">
+											</option>
+										</select>
+									</div>
+									<div class="form-group">
+										<label class="control-label">RUC</label>
+										<input class="form-control" id="ruc" name="ruc" type="text"
+											placeholder="RUC de la empresa" readonly />
+									</div>
+									<div class="form-group">
+										<label class="control-label">NOMBRE</label>
+										<input class="form-control" id="name" name="name" type="text"
+											placeholder="Nombre de la empresa" readonly />
+									</div>
+									<div class="form-group">
+										<label class="control-label">TELEFONO</label>
+										<input class="form-control" id="phone" name="phone" type="text"
+											placeholder="Telefono de la empresa" readonly />
+									</div>
+									<div class="form-group">
+										<label for="exampleSelect1">Estado</label>
+										<select class="form-control" id="statusLogicalDelete"
+											name="statusLogicalDelete">
+											<option value="1">Activo</option>
+											<option value="2">Inactivo</option>
+										</select>
+									</div>
+								</div>
+								<!--//////////////////////////////////////////////////////////////////////-->
+								<div class="col-md-4">
+									<div class="form-group">
+										<label for="role">PROYECTO</label>
+										<select class="form-control" id="project" name="project"
+											onchange="loadDetailsProject(this.value)">
+											<option value="" disabled selected>Seleccione el proyecto</option>
+											<option th:each="project:${listProject}" th:value="${project.id}"
+												th:text="${project.projectName}">
+											</option>
+										</select>
+									</div>
+									<div class="form-group">
+										<label class="control-label">FECHA INICIO</label>
+										<input class="form-control" id="startDate" name="startDate" type="date"
+											placeholder="" readonly />
+									</div>
+									<div class="form-group">
+										<label class="control-label">FECHA FIN</label>
+										<input class="form-control" id="endDate" name="endDate" type="date"
+											placeholder="" readonly />
+									</div>
+									<div class="form-group">
+										<label class="control-label">RESIDENTE</label>
+										<input class="form-control" id="engineer" name="engineer" type="text"
+											placeholder="" readonly />
+									</div>
+									<div class="form-group">
+										<label class="control-label">CIUDAD</label>
+										<input class="form-control" id="city" name="city" type="text"
+											placeholder="" readonly />
+									</div>
+									<!--///////////////////////////////////////////////////////////////////////-->
+									<div class="form-group">
+										<button type="button" class="btn btn-info"
+											onclick="toggleDestinatario2()">Agregar/Quitar destinatario</button>
+									</div>
+									<div id="segundoDestinatario" style="display: none;">
+										<div class="form-group">
+											<label for="exampleSelect1">Destinatario</label>
+											<select class="form-control" id="destinatario2" name="destinatario1"
+												onchange="cargarDetallesDestinatario2(this.value)">
+												<option value="">Seleccione un destinatario</option>
+												<!--<option value="2">Empresas</option>-->
+											</select>
+										</div>
+										<div class="form-group">
+											<label class="control-label">Cedula</label>
+											<input class="form-control" id="cedulaD2" name="cedulaD2" type="text"
+												placeholder="Cedula destinatario 2" readonly />
+										</div>
+										<div class="form-group">
+											<label class="control-label">Apellido</label>
+											<input class="form-control" id="apellidoD2" name="apellidoD2" type="text"
+												placeholder="Apellido destinatario 2" readonly />
+										</div>
+										<div class="form-group">
+											<label class="control-label">Telefono</label>
+											<input class="form-control" id="telefonoD2" name="telefonoD2" type="text"
+												placeholder="Telefono destinatario 2" readonly />
+										</div>
+									</div>
+								</div>
+								<!--///////////////////////////////////////////////////////////////////////-->
+								<div class="col-md-4">
+									<div class="form-group">
+										<label class="control-label">Nro. Transferencia</label>
+										<input class="form-control" id="numeroTransferencia" name="numeroTransferencia"
+											type="text" placeholder="Nro. Transferencia" />
+									</div>
+									<div class="form-group">
+										<label for="exampleSelect1">Ciudad</label>
+										<select class="form-control" id="ciudad" name="ciudad"
+											onchange="cargarDetallesLugarDestino(this.value)">
+											<option value="">Seleccione la ciudad</option>
+											<!--<option value="2">Ciudad 2</option>-->
+										</select>
+									</div>
+									<div class="form-group">
+										<label class="control-label">Direccion</label>
+										<input class="form-control" id="direccion" name="direccion" type="text"
+											placeholder="Direccion" readonly />
+									</div>
+									<div class="form-group">
+										<label class="control-label">Observaciones</label>
+										<textarea class="form-control" rows="4" placeholder="Obervaciones"
+											id="observaciones" name="observaciones"></textarea>
+									</div>
+								</div>
+							</div>
+							<div class="tile-footer d-flex justify-content-end">
+								<button id="btnActionForm" class="btn btn-primary" type="submit"><i
+										class="fa fa-fw fa-lg fa-check-circle"></i><span
+										id="btnText">Guardar</span></button>&nbsp;&nbsp;&nbsp;<a
+									class="btn btn-secondary" href="#" data-dismiss="modal"><i
+										class="fa fa-fw fa-lg fa-times-circle"></i>Cancelar</a>
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

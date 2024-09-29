@@ -238,21 +238,35 @@
 		}
 	}
 
-	/*function loadDetailsCompany(companyId) {
+	function loadDetailsCompany(companyId) {
 		if (!companyId) return;
 
-		fetch(`/request/company/${empresaId}`)
+		fetch(`/requests/companies/${companyId}`)
 			.then(response => response.json())
-			.then(empresa => {
-				document.getElementById('ruc').value = empresa.ruc || '';
-				document.getElementById('nombre').value = empresa.nombre || '';
-				document.getElementById('telefono').value = empresa.telefono || '';
-				document.getElementById('imagenPrevia').src = empresa.foto || 'images/sin_logo.jpg';
+			.then(company => {
+				document.getElementById('ruc').value = company.ruc || '';
+				document.getElementById('name').value = company.name || '';
+				document.getElementById('phone').value = company.phone || '';
+				document.getElementById('imagenPrevia').src = company.image || 'images/sin_logo.jpg';
 			})
 			.catch(error => console.error('Error al cargar detalles de empresa', error));
 	}
+	
+	function loadDetailsProject(projectId) {
+		if (!projectId) return;
 
-	function cargarDetallesLugarDestino(lugarDestinoId) {
+		fetch(`/requests/projects/${projectId}`)
+			.then(response => response.json())
+			.then(project => {
+				document.getElementById('startDate').value = project.startDate || '';
+				document.getElementById('endDate').value = company.endDate || '';
+				document.getElementById('engineer').value = company.engineer|| '';
+				document.getElementById('city').src = company.city || '';
+			})
+			.catch(error => console.error('Error al cargar detalles del proyecto', error));
+	}
+
+	/*function cargarDetallesLugarDestino(lugarDestinoId) {
 		if (!lugarDestinoId) return;
 
 		fetch(`/etiqueta/lugaresDestinos/${lugarDestinoId}`)

@@ -68,6 +68,18 @@ public class RequestController {
         binder.registerCustomEditor(Date.class, new CustomDateEditor(dateFormat, false));
     }
 	
+	@GetMapping("/companies/{id}")
+	@ResponseBody
+	public Company getDetailsCompany(@PathVariable Long id) {
+		return companyService.getById(id);
+	}
+	
+	@GetMapping("/projects/{id}")
+	@ResponseBody
+	public Project getDetailsProject(@PathVariable Long id) {
+		return projectService.getProject(id);
+	}
+	
 	@GetMapping
 	public String listUser(Model model) {
 		//Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
