@@ -6,6 +6,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 
 import org.springframework.stereotype.Repository;
 
+import com.tidsec.gestion_solicitudes.model.RequestDTO;
 import com.tidsec.gestion_solicitudes.model.RequestModalDTO;
 
 import java.sql.SQLException;
@@ -14,36 +15,41 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-
 @Repository
 public class IRequestRepositoryCustom {
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
-   /* public List<EtiquetaDTO> findByDescription() {
-        String sql = "SELECT e.id_etiqueta AS id_etiqueta, m.nombre AS nombre_empresa, e.numero_transferencia AS transferencia, " +
-                     "CONCAT (d.nombre,'  ',d.apellido) AS nombre_destinatario_1, l.ciudad AS ciudad, e.estado AS estado " +
-                     "FROM etiqueta e " +
-                     "INNER JOIN empresa m ON e.id_empresa = m.id_empresa " +
-                     "INNER JOIN lugar_destino l ON e.id_lugar_destino = l.id_lugar_destino " +
-                     "INNER JOIN etiqueta_destinatario ed ON e.id_etiqueta = ed.id_etiqueta " +
-                     "INNER JOIN destinatario d ON ed.id_destinatario = d.id_destinatario " +
-                     "WHERE e.estado = 1 OR e.estado = 2";
+   /*public List<RequestDTO> findByDescription() {
+        String sql = "SELECT r.id AS idRequest, " +
+                "c.name AS nameCompany, " +
+                "p.project_name AS nameProject, " +
+                "r.date AS date, " +
+                "r.status AS status, " +
+                "string_agg(m.name, ', ') AS Inventory " +
+                "FROM request r " +
+                "INNER JOIN company c ON r.company_id = c.id " +
+                "INNER JOIN project p ON r.project_id = p.id " +
+                "LEFT JOIN inventory i ON r.id = i.request_id " +
+                "LEFT JOIN material m ON i.inventory_id = m.id " +
+                "GROUP BY r.id, c.name, p.project_name, r.date, r.status"+
+                "WHERE r.status_logical_delete = 1 OR r.status_logical_delete = 2";
 
-        Map<Integer, EtiquetaDTO> etiquetasMap = new HashMap<>();
+        Map<Integer, RequestDTO> requestMap = new HashMap<>();
         jdbcTemplate.query(sql, rs -> {
             try {
-                int id = rs.getInt("id_etiqueta");
-                EtiquetaDTO etiqueta = etiquetasMap.computeIfAbsent(id, k -> {
+                int id = rs.getInt("idRequest");
+                RequestDTO request = requestMap.computeIfAbsent(id, k -> {
 					try {
-						return new EtiquetaDTO(
+						return new RequestDTO(
 						    id,
-						    rs.getString("nombre_empresa"),
-						    rs.getString("transferencia"),
+						    rs.getString("nameCompany"),
+						    rs.getString("nameProject"),
+						    rs.getString("Inventory"),
 						    new ArrayList<>(),
-						    rs.getString("ciudad"),
-						    rs.getInt("estado")
+						    rs.getDate("date"),
+						    rs.getInt("status")
 						);
 					} catch (SQLException e) {
 						// TODO Auto-generated catch block
@@ -51,7 +57,7 @@ public class IRequestRepositoryCustom {
 					}
 					return null;
 				});
-                etiqueta.getNombres_destinatarios().add(rs.getString("nombre_destinatario_1"));
+                request.getInventory().add(rs.getString("nameInventory1"));
             } catch (SQLException e) {
                 throw new DataAccessException("Error accessing data", e) {
 
@@ -59,33 +65,41 @@ public class IRequestRepositoryCustom {
             }
         });
 
-        return new ArrayList<>(etiquetasMap.values());
+        return new ArrayList<>(requestMap.values());
     }*/
     /*public List<RequestModalDTO> findDescriptionById(Long idRequest) {
-        String sql = "SELECT e.id_etiqueta AS id_etiqueta,e.observaciones AS observaciones, e.numero_transferencia, e.fecha, m.id_empresa AS id_empresa, e.numero_transferencia AS transferencia, " +
-                     "d.id_destinatario AS id_destinatario_1, l.id_lugar_destino AS id_lugar_destino, e.estado AS estado, e.fecha " +
-                     "FROM etiqueta e " +
-                     "INNER JOIN empresa m ON e.id_empresa = m.id_empresa " +
-                     "INNER JOIN lugar_destino l ON e.id_lugar_destino = l.id_lugar_destino " +
-                     "INNER JOIN etiqueta_destinatario ed ON e.id_etiqueta = ed.id_etiqueta " +
-                     "INNER JOIN destinatario d ON ed.id_destinatario = d.id_destinatario " +
-                     "WHERE e.id_etiqueta ="+idRequest;
+        String sql = "SELECT r.id AS idRequest, " +
+                "r.date AS date, " +
+                "r.company_id AS idCompany, " +
+                "i.id AS idInventory, " +
+                "r.project_id AS idProject, " +
+                "r.user_id AS idUser, " +
+                "r.status AS status, " +
+                "r.status_logical_delete AS statusLogicalDelete, " +
+                "array_agg(m.id) AS idMaterial " +
+                "FROM request r " +
+                "LEFT JOIN inventory i ON r.id = i.request_id " +
+                "LEFT JOIN material m ON i.id = m.inventory_id " +
+                "WHERE r.id = " + idRequest + " " +
+                "GROUP BY r.id, r.date, r.company_id, i.id, r.project_id, r.user_id, r.status, r.status_logical_delete";
 
-        Map<Long, RequestModalDTO> etiquetasMap = new HashMap<>();
+        Map<Integer, RequestModalDTO> requestMap = new HashMap<>();
         jdbcTemplate.query(sql, rs -> {
             try {
-                int id = rs.getInt("id_etiqueta");
-                RequestModalDTO etiqueta = etiquetasMap.computeIfAbsent(id, k -> {
+                int id = rs.getInt("idRequest");
+                RequestModalDTO request = requestMap.computeIfAbsent(id, k -> {
 					try {
-						return new EtiquetaModalDTO(
+						return new RequestModalDTO(
 						    id,
-						    rs.getInt("id_empresa"),
-						    rs.getString("observaciones"),
-						    rs.getString("transferencia"),
+						    rs.getDate("date"),
+						    rs.getLong("idCompany"),
+						    rs.getLong("idMaterial"),
 						    new ArrayList<>(),
-						    rs.getInt("id_lugar_destino"),
-						    rs.getInt("estado"),
-						    rs.getDate("fecha")
+						    rs.getLong("idInventory"),
+						    rs.getLong("idProject"),
+						    rs.getLong("idUser"),
+						    rs.getInt("status"),
+						    rs.getInt("statusLogicalDelete")
 						);
 					} catch (SQLException e) {
 						// TODO Auto-generated catch block
@@ -93,7 +107,7 @@ public class IRequestRepositoryCustom {
 					}
 					return null;
 				});
-                etiqueta.getId_destinatario_1().add(rs.getInt("id_destinatario_1"));
+                request.getIdMaterial().add(rs.getLong("idMaterial1"));
             } catch (SQLException e) {
                 throw new DataAccessException("Error accessing data", e) {
 
@@ -101,6 +115,6 @@ public class IRequestRepositoryCustom {
             }
         });
 
-        return new ArrayList<>(etiquetasMap.values());
+        return new ArrayList<>(requestMap.values());
     }*/
 }

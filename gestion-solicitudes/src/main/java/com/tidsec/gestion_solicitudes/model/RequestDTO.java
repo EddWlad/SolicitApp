@@ -12,14 +12,11 @@ import lombok.ToString;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-public class RequestModalDTO {
-	private Long idRequest;
+public class RequestDTO {
+	private int idRequest;
+	private String nameCompany;
+	private String nameProject;
+	private List<String> Inventory;
 	private Date date;
-	private Long idCompany;
-	private List<Long> idMaterial;
-	private Long idInventory;
-	private Long idProject;
-	private Long idUser;
 	private int status;
-	private int statusLogicalDelete;
 }
