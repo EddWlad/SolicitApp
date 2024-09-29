@@ -94,7 +94,7 @@ public class MaterialController {
 			try {
 				Material materialsUpdate = service.getById(id);
 				if (materialsUpdate != null) {
-					materials.setInventory(materialsUpdate.getInventory());
+					materials.setInventories(materialsUpdate.getInventories());
 					service.updateMaterials(id, materials);
 					redirectAttributes.addFlashAttribute("message", "MATERIAL MODIFICADO EXITOSAMENTE");
 				} else {

@@ -109,10 +109,7 @@ public class RequestController {
 					user.ifPresent(request::setRequester);
 					
 					List<Material> material = materialService.buscarPorIds(materialsId);
-					inventory.setMaterial(new ArrayList<>(material));
-					
-					Inventory inventories = inventoryService.findById(inventoryId);
-					materials.setInventory(inventories);
+					inventory.setMaterials(new ArrayList<>(material));
 					
 					service.saveRequest(request);
 					materialService.saveMaterial(materials);
@@ -154,10 +151,7 @@ public class RequestController {
 				user.ifPresent(request::setRequester);
 				
 				List<Material> material = materialService.buscarPorIds(materialsId);
-				inventory.setMaterial(new ArrayList<>(material));
-				
-				Inventory inventories = inventoryService.findById(inventoryId);
-				materials.setInventory(inventories);
+				inventory.setMaterials(new ArrayList<>(material));
 				
 				service.updateRequest(id, request);
 				inventoryService.updateInventory(idInventory, inventory);

@@ -39,7 +39,7 @@ public class MaterialServiceImpl implements IMaterialService{
 		{
 			materialDb.setName(materials.getName());
 			materialDb.setDescription(materials.getDescription());
-			materialDb.setInventory(materials.getInventory());
+			materialDb.setInventories(materials.getInventories());
 			materialDb.setUnitType(materials.getUnitType());
 			materialDb.setStatus(materials.getStatus());
 			return materialRepository.save(materialDb);
