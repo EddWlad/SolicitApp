@@ -101,8 +101,7 @@ public class RequestServiceImpl implements IRequestService{
 
 	@Override
 	public List<RequestDTO> listDetailRequest() {
-		//return requestRepositoryCustom.findByDescription();
-		return null;
+		return requestRepositoryCustom.findByDescription();
 	}
 
 }

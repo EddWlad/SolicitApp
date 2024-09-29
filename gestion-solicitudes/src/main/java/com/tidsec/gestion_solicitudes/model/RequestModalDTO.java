@@ -13,6 +13,7 @@ import lombok.ToString;
 @AllArgsConstructor
 @ToString
 public class RequestModalDTO {
+	
 	private Long idRequest;
 	private Date date;
 	private Long idCompany;

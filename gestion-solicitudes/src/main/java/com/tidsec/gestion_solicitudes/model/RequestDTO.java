@@ -13,10 +13,11 @@ import lombok.ToString;
 @AllArgsConstructor
 @ToString
 public class RequestDTO {
-	private int idRequest;
+	private Long idRequest;
 	private String nameCompany;
 	private String nameProject;
-	private List<String> Inventory;
+	private String nameRequester;
 	private Date date;
 	private int status;
+	private int statusLogicalDelete;
 }

@@ -21,35 +21,35 @@ public class IRequestRepositoryCustom {
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
-   /*public List<RequestDTO> findByDescription() {
-        String sql = "SELECT r.id AS idRequest, " +
+   public List<RequestDTO> findByDescription() {
+        String sql = "SELECT " +
+                "r.id AS idRequest, " +
                 "c.name AS nameCompany, " +
                 "p.project_name AS nameProject, " +
+                "u.name AS nameRequester, " +
                 "r.date AS date, " +
                 "r.status AS status, " +
-                "string_agg(m.name, ', ') AS Inventory " +
+                "r.status_logical_delete AS statusLogicalDelete " +
                 "FROM request r " +
                 "INNER JOIN company c ON r.company_id = c.id " +
                 "INNER JOIN project p ON r.project_id = p.id " +
-                "LEFT JOIN inventory i ON r.id = i.request_id " +
-                "LEFT JOIN material m ON i.inventory_id = m.id " +
-                "GROUP BY r.id, c.name, p.project_name, r.date, r.status"+
-                "WHERE r.status_logical_delete = 1 OR r.status_logical_delete = 2";
+                "INNER JOIN \"user\" u ON r.user_id = u.id " +
+                "WHERE r.status_logical_delete IN (1, 2)";
 
-        Map<Integer, RequestDTO> requestMap = new HashMap<>();
+        Map<Long, RequestDTO> requestMap = new HashMap<>();
         jdbcTemplate.query(sql, rs -> {
             try {
-                int id = rs.getInt("idRequest");
+                Long id = rs.getLong("idRequest");
                 RequestDTO request = requestMap.computeIfAbsent(id, k -> {
 					try {
 						return new RequestDTO(
 						    id,
 						    rs.getString("nameCompany"),
 						    rs.getString("nameProject"),
-						    rs.getString("Inventory"),
-						    new ArrayList<>(),
+						    rs.getString("nameRequester"),
 						    rs.getDate("date"),
-						    rs.getInt("status")
+						    rs.getInt("status"),
+						    rs.getInt("statusLogicalDelete")
 						);
 					} catch (SQLException e) {
 						// TODO Auto-generated catch block
@@ -57,7 +57,6 @@ public class IRequestRepositoryCustom {
 					}
 					return null;
 				});
-                request.getInventory().add(rs.getString("nameInventory1"));
             } catch (SQLException e) {
                 throw new DataAccessException("Error accessing data", e) {
 
@@ -66,34 +65,36 @@ public class IRequestRepositoryCustom {
         });
 
         return new ArrayList<>(requestMap.values());
-    }*/
-    /*public List<RequestModalDTO> findDescriptionById(Long idRequest) {
-        String sql = "SELECT r.id AS idRequest, " +
+    }
+    public List<RequestModalDTO> findDescriptionById(Long idRequest) {
+        String sql = "SELECT " +
+                "r.id AS idRequest, " +
                 "r.date AS date, " +
-                "r.company_id AS idCompany, " +
+                "c.id AS idCompany, " +
+                "m.id AS idMaterial, " +
                 "i.id AS idInventory, " +
-                "r.project_id AS idProject, " +
-                "r.user_id AS idUser, " +
+                "p.id AS idProject, " +
+                "u.id AS idUser, " +
                 "r.status AS status, " +
-                "r.status_logical_delete AS statusLogicalDelete, " +
-                "array_agg(m.id) AS idMaterial " +
+                "r.status_logical_delete AS statusLogicalDelete " +
                 "FROM request r " +
-                "LEFT JOIN inventory i ON r.id = i.request_id " +
-                "LEFT JOIN material m ON i.id = m.inventory_id " +
-                "WHERE r.id = " + idRequest + " " +
-                "GROUP BY r.id, r.date, r.company_id, i.id, r.project_id, r.user_id, r.status, r.status_logical_delete";
+                "INNER JOIN company c ON r.company_id = c.id " +
+                "INNER JOIN inventory i ON r.id = i.request_id " +
+                "INNER JOIN material m ON i.id = m.inventory_id " +
+                "INNER JOIN project p ON r.project_id = p.id " +
+                "INNER JOIN \"user\" u ON r.user_id = u.id " +
+                "WHERE r.status_logical_delete IN (1, 2)";
 
-        Map<Integer, RequestModalDTO> requestMap = new HashMap<>();
+        Map<Long, RequestModalDTO> requestMap = new HashMap<>();
         jdbcTemplate.query(sql, rs -> {
             try {
-                int id = rs.getInt("idRequest");
+                Long id = rs.getLong("idRequest");
                 RequestModalDTO request = requestMap.computeIfAbsent(id, k -> {
 					try {
 						return new RequestModalDTO(
 						    id,
 						    rs.getDate("date"),
 						    rs.getLong("idCompany"),
-						    rs.getLong("idMaterial"),
 						    new ArrayList<>(),
 						    rs.getLong("idInventory"),
 						    rs.getLong("idProject"),
@@ -107,7 +108,7 @@ public class IRequestRepositoryCustom {
 					}
 					return null;
 				});
-                request.getIdMaterial().add(rs.getLong("idMaterial1"));
+                request.getIdMaterial().add(rs.getLong("idMaterial"));
             } catch (SQLException e) {
                 throw new DataAccessException("Error accessing data", e) {
 
@@ -116,5 +117,5 @@ public class IRequestRepositoryCustom {
         });
 
         return new ArrayList<>(requestMap.values());
-    }*/
+    }
 }
