@@ -78,10 +78,11 @@ public class RequestController {
 		List<Company> companies = companyService.getAll();
 		List<Project> projects = projectService.getAll();
 		List<User> users = userService.getAll();
+	    List<Material> materials = materialService.getAll();
 
 		//model.addAttribute("nameRol", user.getRole().getName();
 		//model.addAttribute("nombreUsuario", usuario.getNombre()+" "+usuario.getApellido());
-		model.addAttribute("lisRequest", requests);
+		model.addAttribute("listRequest", requests);
 		model.addAttribute("requests", new Request());
 		model.addAttribute("listCompany", companies);
 		model.addAttribute("companies", new Company());
@@ -89,6 +90,8 @@ public class RequestController {
 		model.addAttribute("projects", new Project());
 		model.addAttribute("listUser", users);
 		model.addAttribute("users", new User());
+	    model.addAttribute("listMaterials", materials);
+	    model.addAttribute("inventory", new Inventory());
 		return "requests";
 	}
 	

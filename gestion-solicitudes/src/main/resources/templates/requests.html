@@ -1,0 +1,339 @@
+<div th:replace="fragments/header"></div>
+<div th:replace="fragments/navbar"></div>
+<div th:replace="fragments/sidebar"></div>
+<div>
+	<main class="app-content">
+		<div class="app-title">
+			<div>
+				<ul class="app-breadcrumb breadcrumb">
+					<li class="breadcrumb-item">
+						<h1><i class="fa fa-tasks"></i> Solicitudes
+							<button class="btn btn-outline-primary ml-1" onClick="openModal();" type="button">
+								<i class="fa fa-plus-circle"></i>Agregar
+							</button>
+						</h1>
+					</li>
+				</ul>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-12">
+				<div class="tile">
+					<div class="tile-body">
+						<div th:if="${message != null}"
+							class="alert alert-success alert-dismissible fade show text-center message">
+							[[${message}]]</div>
+						<div th:if="${errorMessage != null}"
+							class="alert alert-danger alert-dismissible fade show text-center">
+							[[${errorMessage}]]
+						</div>
+						<div class="table-responsive">
+							<table class="table table-hover table-bordered" id="sampleTable">
+								<thead>
+									<tr>
+										<th>ID</th>
+										<th>FECHA</th>
+										<th>EMPRESA</th>
+										<th>PROYECTO</th>
+										<th>SOLICITANTE</th>
+										<th>SEGUIMIENTO</th>
+										<th>ESTADO</th>
+										<th class="col-2">ACCIONES</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr th:each="requests : ${listRequest}">
+										<td>[[${requests.id}]]</td>
+										<td>[[${requests.date}]]</td>
+										<td>[[${requests.company.name}]]</td>
+										<td>[[${requests.project.projectName}]]</td>
+										<td>[[${requests.project.engineer.name}]]</td>
+										<td><span th:if="${requests.status == 1}"> <span
+													class="badge badge-pill badge-secondary">Recibido</span>
+											</span>
+											<span th:if="${requests.status == 2}"> <span
+													class="badge badge-pill badge-light">En proceso...</span>
+											</span>
+											<span th:if="${requests.status == 3}"> <span
+													class="badge badge-pill badge-warning">Parcial</span>
+											</span>
+											<span th:if="${requests.status == 4}"> <span
+													class="badge badge-pill badge-success">Despachado</span>
+											</span>
+										</td>
+										<td><span th:if="${requests.statusLogicalDelete == 1}"> <span
+													class="badge badge-success">Activo</span>
+											</span> <span th:if="${requests.statusLogicalDelete == 2}"> <span
+													class="badge badge-danger">Inactivo</span>
+											</span></td>
+										<td class="form-group col-md-2">
+											<button class="btn btn-primary  btn-sm btnEditRol"
+												th:onclick="'javascript:fntEditRequests(' + ${requests.id} + ')'"
+												title="Editar Solicitud"> <i class="fa fa-pencil"></i></button>
+											<button class="btn btn-danger btn-sm btnDelRol"
+												th:onclick="'javascript:fntDeleteRequests(' + ${requests.id} + ')'"
+												title="Eliminar Solcitud"> <i class="fa fa-trash"></i>
+											</button>
+											<!--<a target="_blank"
+												th:href="@{/requests/print/{id}(id=${requests.id})}"
+												title="Imprimir" id="btnImprimir"
+												class="fa-regular fa fa-print badge badge-pill badge-info"
+												style="color: white;"></a>-->
+										</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</main>
+</div>
+<script th:inline="javascript">
+/*window.addEventListener(
+		"load",
+		function () {
+			loadCompany();
+			loadProject();
+			loadAcquisitions();
+		},
+		false
+	);*/
+	async function fntDeleteRequests(idRequest) {
+		swal({
+			title: "Eliminar Solicitud",
+			text: "¿Realmente quiere eliminar la solicitud?",
+			type: "warning",
+			showCancelButton: true,
+			confirmButtonText: "Si, eliminar!",
+			cancelButtonText: "No, cancelar!",
+			closeOnConfirm: false,
+			closeOnCancel: true
+		}, async function (isConfirm) {
+
+			if (isConfirm) {
+				let res = await fetch(`/requests/delete/${idRequest}`, {
+					method: 'DELETE'
+				}),
+					json = await res.json();
+				if (json) {
+					swal("Eliminar!", "Solicitud eliminada correctamente.", "success");
+					location.reload();
+				} else {
+					swal("Atención!", "No se pudo eliminar la solicitud.", "error");
+				}
+			}
+
+		});
+	}
+	async function fntEditRequests(idRequest) {
+		document.querySelector('#titleModal').innerHTML = "Actualizar Solicitud";
+		document.querySelector('.modal-header').classList.replace("headerRegister", "headerUpdate");
+		document.querySelector('#btnActionForm').classList.replace("btn-primary", "btn-info");
+		document.querySelector('#btnText').innerHTML = "Actualizar";
+		limpiarFormulario();
+		let ajaxUrl = "requests/edit/" + idRequest;
+		let res = await fetch(ajaxUrl),
+			json = await res.json();
+		if (json) {
+			var formRequest = document.getElementById('formIdRequest');
+			const requestId = formRequest.setAttribute('action', `/requests/edit/${json.id}`);
+			document.querySelector("#_method").value = "put";
+			document.querySelector("#id").value = json.id;
+			document.querySelector("#date").value = json.date;
+			document.querySelector("#company").value = json.company.id;
+			document.querySelector("#project").value = json.project.id;
+			document.querySelector("#requester").value = json.requester.id;
+			document.querySelector("#status").value = json.status;
+	        if (json.inventory) {
+	            document.querySelector("#inventory").value = json.inventory.id;
+	        }
+	        
+	        let materialsSelect = document.querySelector("#materials");
+	        materialsSelect.innerHTML = '';
+	        json.materials.forEach(material => {
+	            let option = document.createElement('option');
+	            option.value = material.id;
+	            option.text = material.name + " - Cantidad: " + material.quantity;
+	            option.selected = true;
+	            materialsSelect.appendChild(option);
+	        });
+	        
+	        document.querySelector("#statusLogicalDelete").value = json.statusLogicalDelete;
+		}
+		$('#modalFormRequest').modal('show');
+	}
+	/*function cargarDestinatario() {
+		// Cargar destinatarios
+		fetch('/etiqueta/destinatarios')
+			.then(response => response.json())
+			.then(data => {
+				const select1 = document.querySelector('#destinatario1');
+				const select2 = document.querySelector('#destinatario2');
+
+				select1.innerHTML = '<option value="">Seleccione un destinatario</option>';
+				select2.innerHTML = '<option value="">Seleccione un destinatario</option>';
+
+				data.forEach(destinatario => {
+					const option1 = document.createElement('option');
+					option1.value = destinatario.id_destinatario;
+					option1.textContent = destinatario.nombre;
+					select1.appendChild(option1);
+
+					const option2 = document.createElement('option');
+					option2.value = destinatario.id_destinatario;
+					option2.textContent = destinatario.nombre;
+					select2.appendChild(option2);
+				});
+			})
+			.catch(error => console.error('Error al cargar destinatarios:', error));
+	}
+	function cargarEmpresas() {
+		// Cargar empresas
+		fetch('/etiqueta/empresas')
+			.then(response => response.json())
+			.then(data => {
+				const select = document.querySelector('#empresas');
+				select.innerHTML = '<option value="">Seleccione una empresa</option>';
+				data.forEach(empresa => {
+					const option = document.createElement('option');
+					option.value = empresa.id_empresa;
+					option.textContent = empresa.nombre;
+					select.appendChild(option);
+				});
+			})
+			.catch(error => console.error('Error al cargar empresas:', error));
+	}
+	function cargarLugaresDestinos() {
+		// Cargar Lugares de destino
+		fetch('/etiqueta/lugaresDestinos')
+			.then(response => response.json())
+			.then(data => {
+				console.log(data)
+				const select = document.querySelector('#ciudad');
+				select.innerHTML = '<option value="">Seleccione un destino</option>'; // Limpiar opciones existentes
+				data.forEach(lugarDestino => {
+					const option = document.createElement('option');
+					option.value = lugarDestino.id_lugarDestino;
+					option.textContent = lugarDestino.ciudad;
+					select.appendChild(option);
+				});
+			})
+			.catch(error => console.error('Error al cargar lugar de destino:', error));
+	}*/
+	function previewAndEncodeImage() {
+		const fileInput = document.getElementById('file');
+		const imagePreview = document.getElementById('imagenPrevia');
+
+		if (fileInput.files && fileInput.files[0]) {
+			const reader = new FileReader();
+
+			reader.onload = function (e) {
+				const base64Image = e.target.result;
+				document.getElementById('image').value = base64Image;
+			};
+
+			reader.readAsDataURL(fileInput.files[0]);
+		}
+	}
+
+	/*function loadDetailsCompany(companyId) {
+		if (!companyId) return;
+
+		fetch(`/request/company/${empresaId}`)
+			.then(response => response.json())
+			.then(empresa => {
+				document.getElementById('ruc').value = empresa.ruc || '';
+				document.getElementById('nombre').value = empresa.nombre || '';
+				document.getElementById('telefono').value = empresa.telefono || '';
+				document.getElementById('imagenPrevia').src = empresa.foto || 'images/sin_logo.jpg';
+			})
+			.catch(error => console.error('Error al cargar detalles de empresa', error));
+	}
+
+	function cargarDetallesLugarDestino(lugarDestinoId) {
+		if (!lugarDestinoId) return;
+
+		fetch(`/etiqueta/lugaresDestinos/${lugarDestinoId}`)
+			.then(response => response.json())
+			.then(lugarDestino => {
+				document.getElementById('direccion').value = lugarDestino.direccion || '';
+			})
+			.catch(error => console.error('Error al cargar detalles de lugar de destion', error));
+	}
+
+	function cargarDetallesDestinatario1(destinatarioId) {
+		if (!destinatarioId) return;
+
+		fetch(`/etiqueta/destinatarios/${destinatarioId}`)
+			.then(response => response.json())
+			.then(destinatario => {
+				document.getElementById('cedulaD1').value = destinatario.cedula || '';
+				document.getElementById('apellidoD1').value = destinatario.apellido || '';
+				document.getElementById('telefonoD1').value = destinatario.telefono || '';
+			})
+			.catch(error => console.error('Error al cargar detalles de lugar de destion', error));
+	}
+
+	function cargarDetallesDestinatario2(destinatarioId) {
+		if (!destinatarioId) return;
+
+		fetch(`/etiqueta/destinatarios/${destinatarioId}`)
+			.then(response => response.json())
+			.then(destinatario => {
+				document.getElementById('cedulaD2').value = destinatario.cedula || '';
+				document.getElementById('apellidoD2').value = destinatario.apellido || '';
+				document.getElementById('telefonoD2').value = destinatario.telefono || '';
+			})
+			.catch(error => console.error('Error al cargar detalles de lugar de destion', error));
+	}
+
+	function toggleDestinatario2() {
+		var x = document.getElementById("segundoDestinatario");
+		if (x.style.display === "none") {
+			x.style.display = "block";  // Mostrar
+		} else {
+			x.style.display = "none";   // Ocultar
+			//document.getElementById('destinatario2').value = '';
+			document.getElementById('cedulaD2').value = '';
+			document.getElementById('apellidoD2').value = '';
+			document.getElementById('telefonoD2').value = '';
+		}
+	}
+	function cargarModal() {
+		var formEmpresa = document.getElementById('formIdEtiqueta');
+		const empresaId = formEmpresa.setAttribute('action', 'etiqueta/guardar');
+		limpiarFormulario();
+		document.querySelector('.modal-header').classList.replace("headerUpdate", "headerRegister");
+		document.querySelector('#btnActionForm').classList.replace("btn-info", "btn-primary");
+		document.querySelector('#btnText').innerHTML = "Guardar";
+		document.querySelector('#titleModal').innerHTML = "Nueva Etiqueta";
+
+
+		$('#modalFormEtiqueta').modal('show');
+	}
+	function limpiarFormulario() {
+		document.querySelector("#idEtiqueta").value = "";
+		document.getElementById('imagenPrevia').src = 'images/sin_logo.jpg';
+		document.querySelector("#empresas").value = "";
+		document.querySelector("#ruc").value = "";
+		document.querySelector("#nombre").value = "";
+		document.querySelector("#telefono").value = "";
+		document.querySelector("#estado").value = "";
+		document.querySelector("#destinatario1").value = "";
+		document.querySelector("#cedulaD1").value = "";
+		document.querySelector("#apellidoD1").value = "";
+		document.querySelector("#telefonoD1").value = "";
+		document.querySelector("#destinatario2").value = "";
+		document.querySelector("#cedulaD2").value = "";
+		document.querySelector("#apellidoD2").value = "";
+		document.querySelector("#telefonoD2").value = "";
+		document.querySelector("#numeroTransferencia").value = "";
+		document.querySelector("#ciudad").value = "";
+		document.querySelector("#direccion").value = "";
+		document.querySelector("#observaciones").value = "";
+	}*/
+</script>
+<div th:replace="fragments/projects_form"></div>
+<div th:replace="fragments/footer"></div>
