@@ -1,21 +1,19 @@
 package com.tidsec.gestion_solicitudes.entities;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -38,10 +36,13 @@ public class Inventory {
     @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
     private Request request;
 
-    @OneToMany(mappedBy = "inventory", cascade = CascadeType.ALL)
-    @ToString.Exclude
-    @JsonManagedReference
-    private List<Material> material = new ArrayList<Material>(); 
+    @ManyToMany
+    @JoinTable(
+        name = "material_inventory",
+        joinColumns = @JoinColumn(name = "inventory_id", referencedColumnName = "id"),
+        inverseJoinColumns = @JoinColumn(name = "material_id", referencedColumnName = "id")
+    )
+    private List<Material> materials;
 
     @Column(nullable = true)
     private Double quantity;

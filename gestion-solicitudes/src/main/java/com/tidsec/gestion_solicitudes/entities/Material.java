@@ -1,5 +1,7 @@
 package com.tidsec.gestion_solicitudes.entities;
 
+import java.util.List;
+
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
@@ -8,8 +10,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -36,11 +37,10 @@ public class Material {
     @Column(nullable = false)
     private String unitType;
     
-    @ManyToOne
+    @ManyToMany(mappedBy = "materials")
     @ToString.Exclude
-    @JoinColumn(name = "inventory_id", nullable = true)
     @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
-    private Inventory inventory;
+    private List<Inventory> inventories;
 
     @Column(nullable = false)
     private Integer status;
