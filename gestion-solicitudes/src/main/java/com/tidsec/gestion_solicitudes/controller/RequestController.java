@@ -1,7 +1,6 @@
 package com.tidsec.gestion_solicitudes.controller;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -32,8 +31,6 @@ import com.tidsec.gestion_solicitudes.entities.Request;
 import com.tidsec.gestion_solicitudes.entities.User;
 import com.tidsec.gestion_solicitudes.model.RequestModalDTO;
 import com.tidsec.gestion_solicitudes.service.ICompanyService;
-import com.tidsec.gestion_solicitudes.service.IInventoryService;
-import com.tidsec.gestion_solicitudes.service.IMaterialService;
 import com.tidsec.gestion_solicitudes.service.IProjectService;
 import com.tidsec.gestion_solicitudes.service.IRequestService;
 import com.tidsec.gestion_solicitudes.service.IUserService;
@@ -54,12 +51,6 @@ public class RequestController {
 	
 	@Autowired
 	private IUserService userService;
-	
-	@Autowired
-	private IMaterialService materialService;
-	
-	@Autowired
-	private IInventoryService inventoryService;
 	
 	@InitBinder
     public void initBinder(WebDataBinder binder) {
@@ -94,8 +85,7 @@ public class RequestController {
 	
 	@PostMapping("/save")
 	public String saveRequest(@Valid @ModelAttribute Request request,@ModelAttribute Inventory inventory,@ModelAttribute Material materials, 
-			@RequestParam("companies") Long companyId,@RequestParam("project") Long projectId, @RequestParam("inventory") Long inventoryId,
-			@RequestParam("materials") List<Long> materialsId, 
+			@RequestParam("companies") Long companyId,@RequestParam("project") Long projectId, 
 			@RequestParam("user") Long userId,BindingResult bindingResult,RedirectAttributes redirectAttributes) {
 		if (!bindingResult.hasErrors()) {
 			try {
@@ -108,12 +98,7 @@ public class RequestController {
 					Optional<User> user = userService.findById(userId);
 					user.ifPresent(request::setRequester);
 					
-					List<Material> material = materialService.buscarPorIds(materialsId);
-					inventory.setMaterials(new ArrayList<>(material));
-					
 					service.saveRequest(request);
-					materialService.saveMaterial(materials);
-					inventoryService.saveInventory(inventory);
 					redirectAttributes.addFlashAttribute("message", "SOLICITUD CREADA Y ENVIADA CON EXITO");
 			} catch (Exception e) {
 				redirectAttributes.addFlashAttribute("message", e.getMessage());
@@ -136,9 +121,7 @@ public class RequestController {
 	@PutMapping("/edit/{id}")
 	public String editRequest(Model model,@PathVariable Long id, @ModelAttribute Request request,@PathVariable Long idInventory,@ModelAttribute Inventory inventory,@PathVariable Long idMaterials, @ModelAttribute Material materials,
 			@RequestParam("company") Long companyId,@RequestParam("project") Long projectId,
-			@RequestParam("user") Long userId,@RequestParam("inventory") Long inventoryId,
-			@RequestParam("materials") List<Long> materialsId,
-			BindingResult bindingResult, RedirectAttributes redirectAttributes) {
+			@RequestParam("user") Long userId, BindingResult bindingResult, RedirectAttributes redirectAttributes) {
 		if (!bindingResult.hasErrors()) {
 			try {
 				Optional<Company> company = companyService.findById(companyId);
@@ -150,12 +133,7 @@ public class RequestController {
 				Optional<User> user = userService.findById(userId);
 				user.ifPresent(request::setRequester);
 				
-				List<Material> material = materialService.buscarPorIds(materialsId);
-				inventory.setMaterials(new ArrayList<>(material));
-				
 				service.updateRequest(id, request);
-				inventoryService.updateInventory(idInventory, inventory);
-				materialService.updateMaterials(idMaterials, materials);
 				redirectAttributes.addFlashAttribute("message", "LA SOLICITUD HA SIDO MODIFICADA CORRECTAMENTE");
 			} catch (Exception e) {
 				redirectAttributes.addFlashAttribute("message", e.getMessage());

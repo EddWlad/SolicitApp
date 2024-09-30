@@ -16,5 +16,4 @@ public interface IInventoryService {
 	Long countInventory();
 	
 	//List<Inventory> findByProject(Project project);
-	List<Inventory> findByMaterial(Material material);
 }

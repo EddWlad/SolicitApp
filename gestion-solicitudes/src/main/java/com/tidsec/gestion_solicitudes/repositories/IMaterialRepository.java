@@ -12,6 +12,5 @@ import com.tidsec.gestion_solicitudes.entities.Material;
 @Repository
 public interface IMaterialRepository extends JpaRepository<Material, Long> {
 	List<Material> findByStatusNot(Integer status);
-	List<Material> findByInventory(Inventory inventory);
 	Material findByName(String name);
 }

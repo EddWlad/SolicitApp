@@ -17,14 +17,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.tidsec.gestion_solicitudes.entities.Inventory;
 import com.tidsec.gestion_solicitudes.entities.Material;
-import com.tidsec.gestion_solicitudes.service.IInventoryService;
 import com.tidsec.gestion_solicitudes.service.IMaterialService;
 
-
 import jakarta.validation.Valid;
-
 
 @Controller
 @RequestMapping("/materials")
@@ -32,9 +28,6 @@ public class MaterialController {
 
 	@Autowired
 	private IMaterialService service;
-	
-	@Autowired
-	private IInventoryService inventoryService;
 	
 	@GetMapping
 	public String listarEmpresas(Model model) {
@@ -58,9 +51,8 @@ public class MaterialController {
 				Material nameValid = service.findByName(material.getName());
 				if(nameValid==null) {
 					Material materialSaved = service.saveMaterial(material);
-					List<Inventory> inventory = inventoryService.findByMaterial(materialSaved);
 					//materialSaved.setInventory(inventory);
-					service.saveMaterial(material);
+					service.saveMaterial(materialSaved);
 					redirectAttributes.addFlashAttribute("message", "El material ha sido guardado con éxito");					
 				}else if(nameValid != null &&nameValid.getStatus() == 0){
 					material.setStatus(1);

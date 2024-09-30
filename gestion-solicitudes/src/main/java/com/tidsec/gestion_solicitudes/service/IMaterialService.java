@@ -16,7 +16,5 @@ public interface IMaterialService {
 	boolean deleteMaterials(Long id);
 	Long countMaterials();
 	
-	List<Material> findByInventory(Inventory inventory);
-	
 	Material findByName(String name);
 }
